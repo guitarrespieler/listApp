@@ -1,0 +1,21 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="hu.bme.aut.listapp.list.ItemListActivity">
+    <item
+        android:id="@+id/listPriceMenuBtn"
+        android:orderInCategory="100"
+        android:title="@string/priceOfLists"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/numberOfItemsMenuBtn"
+        android:orderInCategory="100"
+        android:title="@string/numberOfItems"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/ListSizeMenuBtn"
+        android:orderInCategory="100"
+        android:title="@string/SizeOfLists"
+        app:showAsAction="never" />
+
+</menu>

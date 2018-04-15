@@ -1,0 +1,32 @@
+<resources>
+    <string name="app_name">ListApp</string>
+    <string name="shoppingLists">Bevásárló listák</string>
+    <string name="map">Térkép</string>
+    <string name="statistics">Statisztikák</string>
+    <string name="pieces">darab</string>
+    <string name="currency">Ft</string>
+    <string name="title_activity_list">Lista</string>
+    <string name="action_settings">Beállítások</string>
+    <string name="lists">Bevásárlólisták</string>
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="title_activity_item_list">ItemListActivity</string>
+    <string name="intentParamStr">itemList</string>
+    <string name="listName">Bevásárlólista neve</string>
+    <string name="save">Mentés</string>
+    <string name="cancel">Mégse</string>
+    <string name="newItemsName">Új elem neve</string>
+    <string name="quantity">Mennyiség</string>
+    <string name="unitPrice">Egységár</string>
+    <string name="estimatedPrice"> - becsült ár:</string>
+    <string name="deleteListMenuItem">Lista törlése</string>
+    <string name="deleteListTitle">Bevásárlólista törlése</string>
+    <string name="confirmDeleteMessage">Biztosan törli az egész listát?</string>
+    <string name="delete">Törlés</string>
+    <string name="renameList">Lista átnevezése</string>
+    <string name="calculateSumOfPrices">Fizetendő kiszámítása</string>
+    <string name="sumOfPrices">Fizetendő összesen:</string>
+    <string name="statisticsTitle">Statisztikák</string>
+    <string name="priceOfLists">Listák ára</string>
+    <string name="numberOfItems">Tételek száma</string>
+    <string name="SizeOfLists">Listák mérete</string>
+</resources>
