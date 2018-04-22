@@ -14,6 +14,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
+import java.util.LinkedList;
 import java.util.List;
 
 import butterknife.BindView;
@@ -36,7 +37,7 @@ public class ItemListActivity extends AppCompatActivity implements AddNewItemFra
     FloatingActionButton fab;
 
     private ItemList itemList;
-    private List<Item> items;
+    private List<Item> items = new LinkedList<>();
 
     private ItemListAdapter adapter;
 
