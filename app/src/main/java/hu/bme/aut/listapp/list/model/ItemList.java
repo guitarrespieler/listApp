@@ -63,7 +63,7 @@ public class ItemList extends SugarRecord implements Serializable{
     }
 
     public void deleteAllItemFromThisList(){
-        String whereClause = "containingList = ?";
+        String whereClause = "containing_list = ?";
 
         List<Item> items = null;
 

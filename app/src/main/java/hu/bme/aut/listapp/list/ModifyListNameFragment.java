@@ -27,7 +27,7 @@ import hu.bme.aut.listapp.list.model.ItemList;
  * Use the {@link AddNewListFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class ModifyListFragment extends DialogFragment {
+public class ModifyListNameFragment extends DialogFragment {
     // Log tag
     public static final String TAG = "ItemListModifyFragment";
 
@@ -47,7 +47,7 @@ public class ModifyListFragment extends DialogFragment {
 
     private OnFragmentInteractionListener interactionListener;
 
-    public ModifyListFragment() {
+    public ModifyListNameFragment() {
         // Required empty public constructor
     }
 
@@ -59,8 +59,8 @@ public class ModifyListFragment extends DialogFragment {
      * @param param2 Parameter 2.
      * @return A new instance of fragment AddNewListFragment.
      */
-    public static ModifyListFragment newInstance(String param1, String param2) {
-        ModifyListFragment fragment = new ModifyListFragment();
+    public static ModifyListNameFragment newInstance(String param1, String param2) {
+        ModifyListNameFragment fragment = new ModifyListNameFragment();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
@@ -88,7 +88,7 @@ public class ModifyListFragment extends DialogFragment {
 
     public void onButtonPressed(Uri uri) {
         if (interactionListener != null) {
-            interactionListener.onFragmentInteraction(uri);
+            interactionListener.refresh();
         }
     }
 
@@ -128,7 +128,7 @@ public class ModifyListFragment extends DialogFragment {
                 itemlist.refreshLastModifiedDate();
                 itemlist.save();
 
-                interactionListener.listModified();
+                interactionListener.refresh();
                 this.dismiss();
                 break;
             case R.id.cancelBtn:
@@ -144,8 +144,6 @@ public class ModifyListFragment extends DialogFragment {
      * activity.
      */
     public interface OnFragmentInteractionListener {
-        void onFragmentInteraction(Uri uri);
-
-        void listModified();
+        void refresh();
     }
 }

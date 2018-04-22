@@ -1,7 +1,6 @@
 package hu.bme.aut.listapp.list;
 
 import android.content.DialogInterface;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.FragmentManager;
@@ -21,12 +20,13 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import hu.bme.aut.listapp.R;
-import hu.bme.aut.listapp.list.AddNewItemFragment;
 import hu.bme.aut.listapp.list.adapter.ItemListAdapter;
+import hu.bme.aut.listapp.list.async.AsyncItemListLoader;
+import hu.bme.aut.listapp.list.async.AsyncListLoader;
 import hu.bme.aut.listapp.list.model.Item;
 import hu.bme.aut.listapp.list.model.ItemList;
 
-public class ItemListActivity extends AppCompatActivity implements AddNewItemFragment.OnFragmentInteractionListener, ModifyListFragment.OnFragmentInteractionListener {
+public class ItemListActivity extends AppCompatActivity implements AddNewItemFragment.OnFragmentInteractionListener, ModifyListNameFragment.OnFragmentInteractionListener {
 
     @BindView(R.id.toolbar)
     Toolbar toolbar;
@@ -45,37 +45,24 @@ public class ItemListActivity extends AppCompatActivity implements AddNewItemFra
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_item_list);
         ButterKnife.bind(this);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
-        Long itemListId = (long) getIntent().getSerializableExtra(getString(R.string.intentParamStr));
-        itemList = ItemList.findById(ItemList.class, itemListId);
-
-
-
-        toolbar.setTitle(itemList.getName());
     }
 
     @Override
     protected void onResume() {
         super.onResume();
 
-        refreshList();
+        refresh();
     }
 
-    public void refreshList() {
-        try {
-            itemList.refreshLastModifiedDate();
-            itemList.save();
+    public void setAdapter(ItemListAdapter itemListAdapter){
+        adapter = itemListAdapter;
 
-            items = itemList.findAllContainedItem();
+        recyclerView.setAdapter(adapter);
+    }
 
-            adapter = new ItemListAdapter(this, items);
-            recyclerView.setAdapter(adapter);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
+    public void updateTitle(){
+        toolbar.setTitle(itemList.getName());
     }
 
     @OnClick(R.id.fab)
@@ -104,8 +91,8 @@ public class ItemListActivity extends AppCompatActivity implements AddNewItemFra
                 break;
             case R.id.renameListBtn:
                 FragmentManager fragmentManager = getSupportFragmentManager();
-                ModifyListFragment fragment = new ModifyListFragment();
-                fragment.show(fragmentManager, ModifyListFragment.TAG);
+                ModifyListNameFragment fragment = new ModifyListNameFragment();
+                fragment.show(fragmentManager, ModifyListNameFragment.TAG);
                 break;
             case R.id.calculatePrice:
                 new Thread(new Runnable() {
@@ -161,13 +148,15 @@ public class ItemListActivity extends AppCompatActivity implements AddNewItemFra
         return itemList;
     }
 
-    @Override
-    public void onFragmentInteraction(Uri uri) {
-    }
+    public List<Item> getItems(){return items;}
+
+    public void setItemListObject(ItemList itemlist){ this.itemList = itemlist;}
 
     @Override
-    public void listModified() {
-        refreshList();
-        toolbar.setTitle(itemList.getName());
+    public void refresh() {
+        Long itemListId = (long) getIntent().getSerializableExtra(getString(R.string.intentParamStr));
+
+        (new AsyncItemListLoader(this)).execute(itemListId);
     }
+
 }

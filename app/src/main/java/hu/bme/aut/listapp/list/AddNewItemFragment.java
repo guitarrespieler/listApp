@@ -95,7 +95,7 @@ public class AddNewItemFragment extends DialogFragment {
 
     public void onButtonPressed(Uri uri) {
         if (interactionListener != null) {
-            interactionListener.onFragmentInteraction(uri);
+            interactionListener.refresh();
         }
     }
 
@@ -141,7 +141,7 @@ public class AddNewItemFragment extends DialogFragment {
                 itemlist.refreshLastModifiedDate();
                 itemlist.save();
 
-                interactionListener.listModified();
+                interactionListener.refresh();
 
                 dismiss();
                 break;
@@ -169,9 +169,7 @@ public class AddNewItemFragment extends DialogFragment {
      * activity.
      */
     public interface OnFragmentInteractionListener {
-        void onFragmentInteraction(Uri uri);
-
-        void listModified();
+        void refresh();
     }
 
 

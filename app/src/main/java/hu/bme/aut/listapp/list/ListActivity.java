@@ -10,6 +10,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.FrameLayout;
 
+import java.util.LinkedList;
 import java.util.List;
 
 import butterknife.BindView;
@@ -17,6 +18,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import hu.bme.aut.listapp.R;
 import hu.bme.aut.listapp.list.adapter.ListAdapter;
+import hu.bme.aut.listapp.list.async.AsyncListLoader;
 import hu.bme.aut.listapp.list.model.ItemList;
 
 public class ListActivity extends AppCompatActivity implements AddNewListFragment.OnFragmentInteractionListener {
@@ -32,7 +34,7 @@ public class ListActivity extends AppCompatActivity implements AddNewListFragmen
 
     private ListAdapter adapter;
     private RecyclerView.LayoutManager mLayoutManager;
-    private List<ItemList> itemLists;
+    private List<ItemList> itemLists = new LinkedList<>();
 
 
     @Override
@@ -40,21 +42,22 @@ public class ListActivity extends AppCompatActivity implements AddNewListFragmen
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_list);
         ButterKnife.bind(this);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-
         refreshList();
     }
 
+    @Override
     public void refreshList() {
-        String orderby = "last_modified_date desc";
-        itemLists = ItemList.listAll(ItemList.class, orderby);
-        adapter = new ListAdapter(this, itemLists);
+        (new AsyncListLoader(this)).execute(itemLists);//refresh the recycler view asynchronously
+    }
+
+    public void setAdapter(ListAdapter newAdapter) {
+        adapter = newAdapter;
 
         recyclerView.setAdapter(adapter);
     }
@@ -69,16 +72,5 @@ public class ListActivity extends AppCompatActivity implements AddNewListFragmen
 
                 break;
         }
-    }
-
-
-    @Override
-    public void onFragmentInteraction(Uri uri) {
-
-    }
-
-    @Override
-    public void listModified() {
-        refreshList();
     }
 }

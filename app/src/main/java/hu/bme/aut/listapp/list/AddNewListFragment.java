@@ -88,7 +88,7 @@ public class AddNewListFragment extends DialogFragment {
 
     public void onButtonPressed(Uri uri) {
         if (interactionListener != null) {
-            interactionListener.onFragmentInteraction(uri);
+            interactionListener.refreshList();
         }
     }
 
@@ -124,7 +124,7 @@ public class AddNewListFragment extends DialogFragment {
                 ItemList list = new ItemList(text);
                 list.save();
 
-                interactionListener.listModified();
+                interactionListener.refreshList();
                 this.dismiss();
                 break;
             case R.id.cancelBtn:
@@ -140,8 +140,6 @@ public class AddNewListFragment extends DialogFragment {
      * activity.
      */
     public interface OnFragmentInteractionListener {
-        void onFragmentInteraction(Uri uri);
-
-        void listModified();
+        void refreshList();
     }
 }

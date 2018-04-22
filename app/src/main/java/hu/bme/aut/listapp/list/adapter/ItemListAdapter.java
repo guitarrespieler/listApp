@@ -55,7 +55,7 @@ public class ItemListAdapter extends RecyclerView.Adapter<ItemListAdapter.ViewHo
 
                 item.delete();
 
-                activity.listModified();
+                activity.refresh();
                 return true;
             }
         });
