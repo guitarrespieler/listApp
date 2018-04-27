@@ -11,7 +11,6 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import hu.bme.aut.listapp.list.ListActivity;
-import hu.bme.aut.listapp.statistics.PieChartFragment;
 import hu.bme.aut.listapp.statistics.StatisticsActivity;
 
 public class MainActivity extends AppCompatActivity {

@@ -73,6 +73,7 @@ public class StatisticsActivity extends AppCompatActivity {
         l.setYEntrySpace(0f);
         l.setYOffset(0f);
 
+
         // entry label styling
         piechart.setEntryLabelColor(Color.BLACK);
         piechart.setEntryLabelTextSize(12f);
@@ -103,15 +104,19 @@ public class StatisticsActivity extends AppCompatActivity {
         switch (itemId) {
             case R.id.listPriceMenuBtn:
                 piechart.setData(listPrices);
+                piechart.setCenterText(getString(R.string.priceOfLists));
                 break;
             case R.id.numberOfItemsMenuBtn:
                 piechart.setData(numberOfItems);
+                piechart.setCenterText(getString(R.string.numberOfItems));
                 break;
             case R.id.ListSizeMenuBtn:
                 piechart.setData(ListsSize);
+                piechart.setCenterText(getString(R.string.SizeOfLists));
                 break;
         }
         piechart.highlightValues(null);
+
         piechart.invalidate();
 
         piechart.animateY(1400, Easing.EasingOption.EaseInOutQuad);
