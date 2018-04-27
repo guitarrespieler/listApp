@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 
@@ -55,7 +56,22 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
-//        inflater.inflate(R.menu.main, menu);
+        inflater.inflate(R.menu.menu_main, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_settings:
+                Intent intentSettings = new Intent(MainActivity.this, SettingsActivity.class);
+                intentSettings.putExtra(SettingsActivity.EXTRA_SHOW_FRAGMENT,
+                        SettingsActivity.FragmentSettingsBasic.class.getName());
+                intentSettings.putExtra(SettingsActivity.EXTRA_NO_HEADERS, true);
+                startActivity(intentSettings);
+                break;
+        }
+
         return true;
     }
 }

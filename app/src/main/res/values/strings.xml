@@ -29,4 +29,12 @@
     <string name="priceOfLists">Listák ára</string>
     <string name="numberOfItems">Tételek száma</string>
     <string name="SizeOfLists">Listák mérete</string>
+    <string name="label_off">Kikapcsolva</string>
+    <string name="label_on">Bekapcsolva</string>
+    <string name="title_start_service">Helymeghatározás engedélyezése</string>
+    <string name="monitor_location">Tartózkodási hely nyomonkövetése</string>
+    <string name="channel_name">NAME</string>
+    <string name="locating">Tartózkodási hely meghatározása...</string>
+    <string name="stopGPS">GPS leállítása...</string>
+    <string name="title_activity_maps">Map</string>
 </resources>
