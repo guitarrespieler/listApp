@@ -1,8 +1,7 @@
-package hu.bme.aut.listapp.list.model;
+package hu.bme.aut.listapp.model;
 
 import com.orm.SugarRecord;
 import com.orm.dsl.Table;
-import com.orm.query.Select;
 
 import java.io.Serializable;
 import java.util.List;

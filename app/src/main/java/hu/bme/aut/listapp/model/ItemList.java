@@ -1,4 +1,4 @@
-package hu.bme.aut.listapp.list.model;
+package hu.bme.aut.listapp.model;
 
 import com.orm.SugarRecord;
 import com.orm.dsl.Table;

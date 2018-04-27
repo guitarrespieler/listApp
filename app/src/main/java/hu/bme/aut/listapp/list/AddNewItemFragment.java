@@ -16,8 +16,8 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.Unbinder;
 import hu.bme.aut.listapp.R;
-import hu.bme.aut.listapp.list.model.Item;
-import hu.bme.aut.listapp.list.model.ItemList;
+import hu.bme.aut.listapp.model.Item;
+import hu.bme.aut.listapp.model.ItemList;
 
 
 /**

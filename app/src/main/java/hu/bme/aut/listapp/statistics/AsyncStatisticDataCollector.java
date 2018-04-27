@@ -7,7 +7,6 @@ import android.view.View;
 import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.data.PieEntry;
-import com.github.mikephil.charting.formatter.PercentFormatter;
 import com.github.mikephil.charting.utils.ColorTemplate;
 import com.github.mikephil.charting.utils.MPPointF;
 
@@ -18,8 +17,8 @@ import java.util.Random;
 import java.util.concurrent.CountDownLatch;
 
 import hu.bme.aut.listapp.R;
-import hu.bme.aut.listapp.list.model.Item;
-import hu.bme.aut.listapp.list.model.ItemList;
+import hu.bme.aut.listapp.model.Item;
+import hu.bme.aut.listapp.model.ItemList;
 
 class AsyncStatisticDataCollector extends AsyncTask<Void, Void, Void> {
 

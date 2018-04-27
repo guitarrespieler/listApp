@@ -1,6 +1,5 @@
 package hu.bme.aut.listapp.list;
 
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.FragmentManager;
@@ -19,7 +18,7 @@ import butterknife.OnClick;
 import hu.bme.aut.listapp.R;
 import hu.bme.aut.listapp.list.adapter.ListAdapter;
 import hu.bme.aut.listapp.list.async.AsyncListLoader;
-import hu.bme.aut.listapp.list.model.ItemList;
+import hu.bme.aut.listapp.model.ItemList;
 
 public class ListActivity extends AppCompatActivity implements AddNewListFragment.OnFragmentInteractionListener {
 

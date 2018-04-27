@@ -13,7 +13,7 @@ import java.util.List;
 import hu.bme.aut.listapp.list.ItemListActivity;
 import hu.bme.aut.listapp.list.ListActivity;
 import hu.bme.aut.listapp.R;
-import hu.bme.aut.listapp.list.model.ItemList;
+import hu.bme.aut.listapp.model.ItemList;
 
 /**
  * Created by Zsiga Tibor on 2018. 04. 04..

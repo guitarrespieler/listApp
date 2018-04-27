@@ -2,15 +2,13 @@ package hu.bme.aut.listapp.statistics;
 
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.CountDownLatch;
 
-import hu.bme.aut.listapp.list.model.Item;
-import hu.bme.aut.listapp.list.model.ItemList;
+import hu.bme.aut.listapp.model.Item;
+import hu.bme.aut.listapp.model.ItemList;
 
 /**
  * Created by Zsiga Tibor on 2018. 04. 05..

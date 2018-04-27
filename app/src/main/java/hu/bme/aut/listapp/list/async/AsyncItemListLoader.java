@@ -6,9 +6,8 @@ import java.util.List;
 
 import hu.bme.aut.listapp.list.ItemListActivity;
 import hu.bme.aut.listapp.list.adapter.ItemListAdapter;
-import hu.bme.aut.listapp.list.adapter.ListAdapter;
-import hu.bme.aut.listapp.list.model.Item;
-import hu.bme.aut.listapp.list.model.ItemList;
+import hu.bme.aut.listapp.model.Item;
+import hu.bme.aut.listapp.model.ItemList;
 
 /**
  * Created by Zsiga Tibor on 2018. 04. 22..

@@ -6,7 +6,7 @@ import java.util.List;
 
 import hu.bme.aut.listapp.list.ListActivity;
 import hu.bme.aut.listapp.list.adapter.ListAdapter;
-import hu.bme.aut.listapp.list.model.ItemList;
+import hu.bme.aut.listapp.model.ItemList;
 
 /**
  * The class is responsible for loading the list from the db

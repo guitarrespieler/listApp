@@ -23,9 +23,8 @@ import butterknife.OnClick;
 import hu.bme.aut.listapp.R;
 import hu.bme.aut.listapp.list.adapter.ItemListAdapter;
 import hu.bme.aut.listapp.list.async.AsyncItemListLoader;
-import hu.bme.aut.listapp.list.async.AsyncListLoader;
-import hu.bme.aut.listapp.list.model.Item;
-import hu.bme.aut.listapp.list.model.ItemList;
+import hu.bme.aut.listapp.model.Item;
+import hu.bme.aut.listapp.model.ItemList;
 
 public class ItemListActivity extends AppCompatActivity implements AddNewItemFragment.OnFragmentInteractionListener, ModifyListNameFragment.OnFragmentInteractionListener {
 
