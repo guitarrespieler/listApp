@@ -1,11 +1,13 @@
 package hu.bme.aut.listapp.statistics;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.CountDownLatch;
 
 import hu.bme.aut.listapp.list.model.Item;
 import hu.bme.aut.listapp.list.model.ItemList;
@@ -37,8 +39,9 @@ public class StatisticsData {
 
     private int numberOfItems;
 
-    private Map<ItemList, Double> itemListsPricesMap;
+    private double priceOfAllLists = 0.0;
 
+    private Map<ItemList, Double> itemListsPricesMap;
 
     private StatisticsData(){
         itemlistsMap = new HashMap<>();
@@ -51,29 +54,33 @@ public class StatisticsData {
         numberOfItems = 0;
     }
 
-    public static StatisticsData getInstance(){
+    public static synchronized StatisticsData getInstance(){
         if(instance == null)
             instance = new StatisticsData();
 
         return instance;
     }
 
-    public static void deleteDataFromMemory(){
+    public static synchronized void deleteDataFromMemory(){
         instance = null;
     }
 
-    public void gatherInformation(){
+    public synchronized void gatherInformation(){
+        final CountDownLatch allThreadsDone = new CountDownLatch(2);
 
         //find itemlists
-        List<ItemList> lists = ItemList.listAll(ItemList.class);
-
-        for (ItemList itemListObject : lists) {
-            itemlistsMap.put(itemListObject, itemListObject.findAllContainedItem());
-
-            itemListsPricesMap.put(itemListObject, itemListObject.calculateTheWholeListsPrice());
-        }
+        new Thread(() -> {collectItemlistPricesData();allThreadsDone.countDown();}).start();
 
         //get items
+        new Thread(() -> {collectItemData();allThreadsDone.countDown();}).start();
+
+        try {allThreadsDone.await();} catch (Exception e) {}
+
+        numberOfLists = itemlistsMap.size();
+        numberOfItems = items.size();
+    }
+
+    private void collectItemData() {
         items = Item.listAll(Item.class);
 
         //get item names
@@ -81,25 +88,60 @@ public class StatisticsData {
             if(itemCountMap.containsKey(item.getName()))
                 continue;
 
-            long count = item.numberOfItemsWithTheSameName();
+            double quantity = item.getQuantity();
 
+            long count = item.numberOfItemsWithTheSameName();
             if(count > 1){
                 List<Item> itemsWithSameName = item.findItemsWithTheSameName();
 
-                double quantity = 0;
                 for(Item temp : itemsWithSameName){
-                    quantity += temp.getQuantity();
+                    if(item != temp)
+                        quantity += temp.getQuantity();
                 }
-
-                itemCountMap.put(item.getName(), quantity);
             }
+            itemCountMap.put(item.getName(), quantity);
         }
-
-        numberOfLists = itemlistsMap.size();
-        numberOfItems = items.size();
     }
 
+    private void collectItemlistPricesData() {
+        List<ItemList> lists = ItemList.listAll(ItemList.class);
 
+        for (ItemList itemListObject : lists) {
+            itemlistsMap.put(itemListObject, itemListObject.findAllContainedItem());
 
+            final double listPrice = itemListObject.calculateTheWholeListsPrice();
 
+            priceOfAllLists += listPrice;
+
+            itemListsPricesMap.put(itemListObject, listPrice);
+        }
+    }
+
+    public Map<ItemList, List<Item>> getItemlistsMap() {
+        return Collections.unmodifiableMap(itemlistsMap);
+    }
+
+    public Map<String, Double> getItemCountMap() {
+        return Collections.unmodifiableMap(itemCountMap);
+    }
+
+    public List<Item> getItems() {
+        return Collections.unmodifiableList(items);
+    }
+
+    public int getNumberOfLists() {
+        return numberOfLists;
+    }
+
+    public int getNumberOfItems() {
+        return numberOfItems;
+    }
+
+    public double getPriceOfAllLists() {
+        return priceOfAllLists;
+    }
+
+    public Map<ItemList, Double> getItemListsPricesMap() {
+        return Collections.unmodifiableMap(itemListsPricesMap);
+    }
 }

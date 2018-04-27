@@ -12,6 +12,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import hu.bme.aut.listapp.list.ListActivity;
 import hu.bme.aut.listapp.statistics.PieChartFragment;
+import hu.bme.aut.listapp.statistics.StatisticsActivity;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -43,7 +44,7 @@ public class MainActivity extends AppCompatActivity {
                 intent.setPackage("com.google.android.apps.maps");
                 break;
             case R.id.statisticsBtn:
-                intent = new Intent(this, PieChartFragment.class);
+                intent = new Intent(this, StatisticsActivity.class);
                 break;
         }
         if(intent != null)
