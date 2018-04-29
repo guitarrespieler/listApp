@@ -1,6 +1,8 @@
 package hu.bme.aut.listapp;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -14,6 +16,8 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import hu.bme.aut.listapp.list.ListActivity;
+import hu.bme.aut.listapp.map.MapsActivity;
+import hu.bme.aut.listapp.map.ServiceLocation;
 import hu.bme.aut.listapp.statistics.StatisticsActivity;
 
 public class MainActivity extends AppCompatActivity {
@@ -32,6 +36,20 @@ public class MainActivity extends AppCompatActivity {
         ButterKnife.bind(this);
     }
 
+    @Override
+    protected void onResume() {
+        final SharedPreferences sharedPreferences = getSharedPreferences(
+                (SettingsActivity.KEY_START_SERVICE), Context.MODE_PRIVATE);
+
+        boolean isLocationTurnedOn = sharedPreferences.getBoolean(SettingsActivity.KEY_START_SERVICE, false);
+
+        if(isLocationTurnedOn){
+            SettingsActivity.startServiceWhenEnabled(sharedPreferences, getApplicationContext());
+        }
+
+        super.onResume();
+    }
+
     @OnClick({R.id.shoppingListsBtn, R.id.mapBtn, R.id.statisticsBtn})
     public void onViewClicked(View view) {
         Intent intent = null;
@@ -41,9 +59,11 @@ public class MainActivity extends AppCompatActivity {
                 break;
             case R.id.mapBtn:
                 // Search for restaurants nearby
-                Uri gmmIntentUri = Uri.parse("geo:0,0?q=nearby grocery stores");
-                intent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
-                intent.setPackage("com.google.android.apps.maps");
+//                Uri gmmIntentUri = Uri.parse("geo:0,0?q=nearby grocery stores");
+//                intent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
+//                intent.setPackage("com.google.android.apps.maps");
+
+                intent = new Intent(this, MapsActivity.class);
                 break;
             case R.id.statisticsBtn:
                 intent = new Intent(this, StatisticsActivity.class);

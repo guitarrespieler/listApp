@@ -31,15 +31,12 @@ import hu.bme.aut.listapp.SettingsActivity;
 public class ServiceLocation extends Service implements LocationListener {
     private IBinder binderServiceLocation = new BinderServiceLocation();
 
-    private WindowManager windowManager;
-
     public static final String BR_NEW_LOCATION = "BR_NEW_LOCATION";
     public static final String KEY_LOCATION = "KEY_LOCATION";
 
     private LDLocationManager ldLocationManager = null;
     private boolean locationMonitorRunning = false;
 
-    private Location firstLocation = null;
     private Location lastLocation = null;
 
     @Override
@@ -49,8 +46,6 @@ public class ServiceLocation extends Service implements LocationListener {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        firstLocation = null;
-
         if (!locationMonitorRunning) {
             locationMonitorRunning = true;
             ldLocationManager = new LDLocationManager(getApplicationContext(), this);
@@ -70,9 +65,6 @@ public class ServiceLocation extends Service implements LocationListener {
 
     @Override
     public void onLocationChanged(Location location) {
-        if (firstLocation == null) {
-            firstLocation = location;
-        }
         lastLocation = location;
 
         Intent intent = new Intent(BR_NEW_LOCATION);
