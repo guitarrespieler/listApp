@@ -5,4 +5,17 @@
     android:name="com.google.android.gms.maps.SupportMapFragment"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="hu.bme.aut.listapp.map.MapsActivity" />
+    tools:context="hu.bme.aut.listapp.map.MapsActivity">
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/mapFab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_margin="@dimen/fab_margin"
+        android:src="@android:drawable/ic_menu_mylocation" />
+</fragment>
+
+
+
+

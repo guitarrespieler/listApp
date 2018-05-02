@@ -15,7 +15,6 @@
 
     <application
         android:name="com.orm.SugarApp"
-        android:allowBackup="true"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
@@ -76,7 +75,7 @@
 
         <activity
             android:name=".map.MapsActivity"
-            android:label="@string/title_activity_maps"></activity>
+            android:label="@string/title_activity_maps"/>
     </application>
 
 </manifest>

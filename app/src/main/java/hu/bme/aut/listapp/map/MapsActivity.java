@@ -8,28 +8,41 @@ import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.location.Location;
 import android.os.IBinder;
+import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
+import android.view.View;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.UiSettings;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
-import java.util.Date;
+import java.util.List;
 
 import hu.bme.aut.listapp.R;
+import noman.googleplaces.NRPlaces;
+import noman.googleplaces.Place;
+import noman.googleplaces.PlaceType;
+import noman.googleplaces.PlacesException;
+import noman.googleplaces.PlacesListener;
 
-public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
+public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, PlacesListener {
 
     private Location lastLocation;
 
     private GoogleMap mMap;
+
+    private FloatingActionButton fab;
+
+    private PlacesListener listener;
 
     private ServiceLocation.BinderServiceLocation binderServiceLocation = null;
 
@@ -45,20 +58,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     };
 
     private BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
+
         @Override
         public void onReceive(Context context, Intent intent) {
             lastLocation = intent.getParcelableExtra(ServiceLocation.KEY_LOCATION);
-
-            if(mMap != null){
-                CameraPosition cameraPosition = new CameraPosition.Builder()
-                        .target(
-                                new LatLng(lastLocation.getLatitude(),
-                                        lastLocation.getLongitude()))      // Sets the center of the map to location user
-                        .zoom(20)                   // Sets the zoom
-                        .bearing(lastLocation.getBearing())
-                        .build();                   // Creates a CameraPosition from the builder
-                mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
-            }
         }
     };
 
@@ -70,6 +73,42 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+
+        fab = findViewById(R.id.mapFab);
+
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (lastLocation == null || mMap == null)
+                    return;
+
+                CameraPosition cameraPosition = new CameraPosition.Builder()
+                        .target(
+                                new LatLng(lastLocation.getLatitude(),
+                                        lastLocation.getLongitude()))      // Sets the center of the map to location user
+                        .zoom(14)                   // Sets the zoom
+                        .bearing(lastLocation.getBearing())
+                        .build();                   // Creates a CameraPosition from the builder
+                mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+                mMap.clear();
+                mMap.addMarker(new MarkerOptions().position(
+                        new LatLng(lastLocation.getLatitude(),
+                                lastLocation.getLongitude()))
+                        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));
+
+                new NRPlaces.Builder()
+//                        .opennow(true)
+                        .listener(listener)
+                        .latlng(lastLocation.getLatitude(), lastLocation.getLongitude())
+                        .radius(2500)
+                        .key(getString(R.string.google_maps_key))
+                        .type(PlaceType.STORE)
+                        .build()
+                        .execute();
+            }
+        });
+
+        listener = this;
     }
 
     @Override
@@ -108,15 +147,41 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mMap = googleMap;
 
         final UiSettings uiSettings = mMap.getUiSettings();
-        uiSettings.setRotateGesturesEnabled(true);
-        uiSettings.setZoomControlsEnabled(true);
         uiSettings.setCompassEnabled(true);
         uiSettings.setAllGesturesEnabled(true);
-        uiSettings.setMyLocationButtonEnabled(true);
-
 
         // Add a marker in Budapest and move the camera
         LatLng budapest = new LatLng(47.4813602, 18.9902208);
         mMap.moveCamera(CameraUpdateFactory.newLatLng(budapest));
     }
+
+    @Override
+    public void onPlacesFailure(PlacesException e) {
+        Snackbar.make(this.findViewById(R.id.map),
+                "Közeli helyek betöltése nem sikerült.",
+                Snackbar.LENGTH_LONG).show();
+    }
+
+    @Override
+    public void onPlacesStart() {}
+
+    @Override
+    public void onPlacesSuccess(List<Place> places) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                for (Place place : places) {
+                    LatLng latLng = new LatLng(place.getLatitude(), place.getLongitude());
+                    mMap.addMarker(new MarkerOptions().position(latLng)
+                            .title(place.getName())
+                            .snippet(place.getVicinity())
+                            .icon(BitmapDescriptorFactory.
+                                    defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));
+                }
+            }
+        });
+    }
+
+    @Override
+    public void onPlacesFinished() {}
 }
