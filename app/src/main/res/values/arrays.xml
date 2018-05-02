@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="storeType">
+        <item>Összes</item>
+        <item>ATM</item>
+        <item>Áruház</item>
+        <item>Barkácsbolt</item>
+        <item>Bútor üzlet</item>
+        <item>Cipőbolt</item>
+        <item>Elektronikai üzlet</item>
+        <item>Éjjel-nappali</item>
+        <item>Italbolt</item>
+        <item>Kisállat bolt</item>
+        <item>Könyvesbolt</item>
+        <item>Pékség</item>
+        <item>Pláza</item>
+        <item>Ruhaüzlet</item>
+        <item>Virágárus</item>
+    </string-array>
+
+    <string-array name="storeTypeValues">
+        <item>all</item>
+        <item>atm</item>
+        <item>department_store</item>
+        <item>hardware_store</item>
+        <item>furniture_store</item>
+        <item>shoe_store</item>
+        <item>electronics_store</item>
+        <item>convenience_store</item>
+        <item>liquor_store</item>
+        <item>pet_store</item>
+        <item>book_store</item>
+        <item>bakery</item>
+        <item>shopping_mall</item>
+        <item>clothing_store</item>
+        <item>florist</item>
+    </string-array>
+
+    <string-array name="language">
+        <item>Magyar</item>
+    </string-array>
+    <string-array name="languageValues">
+        <item>hu</item>
+    </string-array>
+
+    <string-array name="radius">
+        <item>Bármekkora</item>
+        <item>200 m</item>
+        <item>500 m</item>
+        <item>1000 m</item>
+        <item>1500 m</item>
+        <item>2000 m</item>
+        <item>3000 m</item>
+        <item>5000 m</item>
+        <item>10000 m</item>
+        <item>25000 m</item>
+        <item>50000 m</item>
+    </string-array>
+
+    <string-array name="radiusValues">
+        <item>50000</item>
+        <item>200</item>
+        <item>500</item>
+        <item>1000</item>
+        <item>1500</item>
+        <item>2000</item>
+        <item>3000</item>
+        <item>5000</item>
+        <item>10000</item>
+        <item>25000</item>
+        <item>50000</item>
+    </string-array>
+</resources>

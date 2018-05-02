@@ -9,6 +9,7 @@ import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
 import android.support.design.widget.Snackbar;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import java.util.List;
 
@@ -20,7 +21,12 @@ public class SettingsActivity extends PreferenceActivity implements SharedPrefer
 
     public static final String EXTRA_NO_HEADERS = ":android:no_headers";
     public static final String EXTRA_SHOW_FRAGMENT = ":android:show_fragment";
+
     public static final String KEY_START_SERVICE = "start_service";
+    public static final String KEY_IS_OPEN = "is_open";
+    public static final String KEY_PLACE_TYPE = "place_type";
+    public static final String KEY_RADIUS = "radius";
+    public static final String KEY_LANGUAGE = "language";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,6 +58,8 @@ public class SettingsActivity extends PreferenceActivity implements SharedPrefer
         if (KEY_START_SERVICE.equals(key)) {
             startServiceWhenEnabled(sharedPreferences, getApplicationContext());
         }
+        if (KEY_LANGUAGE.equals(key))
+            Toast.makeText(this, "További nyelvek később...", Toast.LENGTH_LONG).show();
     }
 
     static void startServiceWhenEnabled(SharedPreferences sharedPreferences, Context ctx) {

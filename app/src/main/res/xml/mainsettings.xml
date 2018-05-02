@@ -6,5 +6,26 @@
             android:summaryOff="@string/label_off"
             android:summaryOn="@string/label_on"
             android:title="@string/title_start_service" />
+
+        <SwitchPreference
+            android:key="is_open"
+            android:summaryOff="@string/searchOpenedAndClosedStores"
+            android:summaryOn="@string/searchOnlyOpenedStores"
+            android:title="@string/openedStoresSwitchTitle" />
+        <ListPreference
+            android:entries="@array/storeType"
+            android:entryValues="@array/storeTypeValues"
+            android:key="place_type"
+            android:title="@string/storeTypeLPTitle" />
+        <ListPreference
+            android:entries="@array/radius"
+            android:entryValues="@array/radiusValues"
+            android:key="radius"
+            android:title="@string/searchRadiusLPTitle" />
+        <ListPreference
+            android:entries="@array/language"
+            android:entryValues="@array/languageValues"
+            android:key="language"
+            android:title="@string/languageLPTitle" />
     </PreferenceCategory>
 </PreferenceScreen>

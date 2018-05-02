@@ -5,6 +5,8 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -38,16 +40,17 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onResume() {
-        final SharedPreferences sharedPreferences = getSharedPreferences(
-                (SettingsActivity.KEY_START_SERVICE), Context.MODE_PRIVATE);
-
-        boolean isLocationTurnedOn = sharedPreferences.getBoolean(SettingsActivity.KEY_START_SERVICE, false);
-
-        if(isLocationTurnedOn){
-            SettingsActivity.startServiceWhenEnabled(sharedPreferences, getApplicationContext());
-        }
-
         super.onResume();
+
+        final SharedPreferences sharedPreferences = PreferenceManager
+                .getDefaultSharedPreferences(getApplicationContext());
+
+        if (isLocationServiceEnabled(sharedPreferences))
+            SettingsActivity.startServiceWhenEnabled(sharedPreferences, getApplicationContext());
+    }
+
+    private boolean isLocationServiceEnabled(SharedPreferences sharedPreferences) {
+        return sharedPreferences.getBoolean(SettingsActivity.KEY_START_SERVICE, false);
     }
 
     @OnClick({R.id.shoppingListsBtn, R.id.mapBtn, R.id.statisticsBtn})
@@ -58,18 +61,27 @@ public class MainActivity extends AppCompatActivity {
                 intent = new Intent(this, ListActivity.class);
                 break;
             case R.id.mapBtn:
-                // Search for restaurants nearby
-//                Uri gmmIntentUri = Uri.parse("geo:0,0?q=nearby grocery stores");
-//                intent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
-//                intent.setPackage("com.google.android.apps.maps");
+                final SharedPreferences sharedPreferences = PreferenceManager
+                        .getDefaultSharedPreferences(getApplicationContext());
 
-                intent = new Intent(this, MapsActivity.class);
+                if (isLocationServiceEnabled(sharedPreferences))
+                    intent = new Intent(this, MapsActivity.class);
+                else {
+                    final Snackbar snackbar = Snackbar.make
+                            (view, getString(R.string.noLocationServiceMsg), Snackbar.LENGTH_LONG);
+                    snackbar.setAction(R.string.action_settings,
+                            (View v) -> {
+                                handleMenuButtonOnClick(R.id.action_settings);
+                            });
+
+                    snackbar.show();
+                }
                 break;
             case R.id.statisticsBtn:
                 intent = new Intent(this, StatisticsActivity.class);
                 break;
         }
-        if(intent != null)
+        if (intent != null)
             startActivity(intent);
     }
 
@@ -82,7 +94,11 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
+        return handleMenuButtonOnClick(item.getItemId());
+    }
+
+    private boolean handleMenuButtonOnClick(int itemId) {
+        switch (itemId) {
             case R.id.action_settings:
                 Intent intentSettings = new Intent(MainActivity.this, SettingsActivity.class);
                 intentSettings.putExtra(SettingsActivity.EXTRA_SHOW_FRAGMENT,

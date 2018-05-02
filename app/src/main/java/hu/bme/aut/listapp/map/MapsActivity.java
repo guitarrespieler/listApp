@@ -6,14 +6,17 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
+import android.content.SharedPreferences;
 import android.location.Location;
 import android.os.IBinder;
+import android.preference.PreferenceManager;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
 import android.view.View;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -28,6 +31,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import java.util.List;
 
 import hu.bme.aut.listapp.R;
+import hu.bme.aut.listapp.SettingsActivity;
 import noman.googleplaces.NRPlaces;
 import noman.googleplaces.Place;
 import noman.googleplaces.PlaceType;
@@ -43,6 +47,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private FloatingActionButton fab;
 
     private PlacesListener listener;
+
+    private List<Place> places;
 
     private ServiceLocation.BinderServiceLocation binderServiceLocation = null;
 
@@ -74,41 +80,56 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
-        fab = findViewById(R.id.mapFab);
-
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (lastLocation == null || mMap == null)
-                    return;
-
-                CameraPosition cameraPosition = new CameraPosition.Builder()
-                        .target(
-                                new LatLng(lastLocation.getLatitude(),
-                                        lastLocation.getLongitude()))      // Sets the center of the map to location user
-                        .zoom(14)                   // Sets the zoom
-                        .bearing(lastLocation.getBearing())
-                        .build();                   // Creates a CameraPosition from the builder
-                mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
-                mMap.clear();
-                mMap.addMarker(new MarkerOptions().position(
-                        new LatLng(lastLocation.getLatitude(),
-                                lastLocation.getLongitude()))
-                        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));
-
-                new NRPlaces.Builder()
-//                        .opennow(true)
-                        .listener(listener)
-                        .latlng(lastLocation.getLatitude(), lastLocation.getLongitude())
-                        .radius(2500)
-                        .key(getString(R.string.google_maps_key))
-                        .type(PlaceType.STORE)
-                        .build()
-                        .execute();
-            }
-        });
-
         listener = this;
+
+        fab = findViewById(R.id.mapFab);
+        fab.setOnClickListener((view) -> {
+            if (lastLocation == null || mMap == null) {
+                Snackbar.make(view, R.string.tryAgainLaterMsg,
+                        Snackbar.LENGTH_LONG).show();
+                return;
+            }
+            CameraPosition cameraPosition = new CameraPosition.Builder()
+                    .target(
+                            new LatLng(lastLocation.getLatitude(),
+                                    lastLocation.getLongitude()))      // Sets the center of the map to location user
+                    .zoom(14)                   // Sets the zoom
+                    .bearing(lastLocation.getBearing())
+                    .build();                   // Creates a CameraPosition from the builder
+            mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+            mMap.clear();
+            mMap.addMarker(new MarkerOptions().position(
+                    new LatLng(lastLocation.getLatitude(),
+                            lastLocation.getLongitude()))
+                    .icon(BitmapDescriptorFactory.
+                            defaultMarker(BitmapDescriptorFactory.HUE_GREEN))
+                    .title(getString(R.string.user_position)));
+
+            final SharedPreferences sharedPreferences = PreferenceManager
+                    .getDefaultSharedPreferences(getApplicationContext());
+
+            boolean openNow = sharedPreferences.getBoolean(SettingsActivity.KEY_IS_OPEN, false);
+            String type = sharedPreferences.getString(SettingsActivity.KEY_PLACE_TYPE, "");
+
+            int radius = 0;
+            try {
+                radius = Integer.parseInt(sharedPreferences.getString(SettingsActivity.KEY_RADIUS, "50000"));
+            } catch (Exception e) {
+            }
+
+            final NRPlaces.Builder builder = new NRPlaces.Builder();
+
+            if (!type.isEmpty() && !type.equals("all"))
+                builder.type(type);
+
+            builder.opennow(openNow)
+                    .listener(listener)
+                    .radius(radius)
+                    .latlng(lastLocation.getLatitude(), lastLocation.getLongitude())
+                    .key(getString(R.string.google_maps_key))
+                    .build()
+                    .execute();
+        });
     }
 
     @Override
@@ -157,31 +178,31 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     @Override
     public void onPlacesFailure(PlacesException e) {
-        Snackbar.make(this.findViewById(R.id.map),
-                "Közeli helyek betöltése nem sikerült.",
-                Snackbar.LENGTH_LONG).show();
+        e.printStackTrace();
     }
 
     @Override
-    public void onPlacesStart() {}
+    public void onPlacesStart() {
+    }
 
     @Override
-    public void onPlacesSuccess(List<Place> places) {
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                for (Place place : places) {
-                    LatLng latLng = new LatLng(place.getLatitude(), place.getLongitude());
-                    mMap.addMarker(new MarkerOptions().position(latLng)
-                            .title(place.getName())
-                            .snippet(place.getVicinity())
-                            .icon(BitmapDescriptorFactory.
-                                    defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));
-                }
+    public void onPlacesSuccess(List<Place> placesList) {
+        runOnUiThread(() -> {
+            places.clear();
+            places = placesList;
+
+            for (Place place : places) {
+                LatLng latLng = new LatLng(place.getLatitude(), place.getLongitude());
+                mMap.addMarker(new MarkerOptions().position(latLng)
+                        .title(place.getName())
+                        .snippet(place.getVicinity())
+                        .icon(BitmapDescriptorFactory.
+                                defaultMarker(BitmapDescriptorFactory.HUE_RED)));
             }
         });
     }
 
     @Override
-    public void onPlacesFinished() {}
+    public void onPlacesFinished() {
+    }
 }

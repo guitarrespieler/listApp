@@ -37,4 +37,13 @@
     <string name="locating">Tartózkodási hely meghatározása...</string>
     <string name="stopGPS">GPS leállítása...</string>
     <string name="title_activity_maps">Map</string>
+    <string name="noLocationServiceMsg">Helymeghatározás nélkül nem üzemel.</string>
+    <string name="searchOpenedAndClosedStores">Kinyitott és bezárt üzletek keresése</string>
+    <string name="searchOnlyOpenedStores">Csak kinyitott üzletek keresése</string>
+    <string name="openedStoresSwitchTitle">Már kinyitott üzletek keresése</string>
+    <string name="storeTypeLPTitle">Keresendő üzlettípus</string>
+    <string name="searchRadiusLPTitle">Keresési távolság</string>
+    <string name="languageLPTitle">Nyelv</string>
+    <string name="tryAgainLaterMsg">Tartózkodási hely nem elérhető. Próbálja később.</string>
+    <string name="user_position">Ön itt áll</string>
 </resources>
