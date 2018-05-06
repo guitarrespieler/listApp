@@ -20,7 +20,7 @@
     <string name="estimatedPrice"> - becsült ár:</string>
     <string name="deleteListMenuItem">Lista törlése</string>
     <string name="deleteListTitle">Bevásárlólista törlése</string>
-    <string name="confirmDeleteMessage">Biztosan törli az egész listát?</string>
+    <string name="confirmDeleteMessage">Biztosan törlöd az egész listát?</string>
     <string name="delete">Törlés</string>
     <string name="renameList">Lista átnevezése</string>
     <string name="calculateSumOfPrices">Fizetendő kiszámítása</string>
@@ -44,6 +44,8 @@
     <string name="storeTypeLPTitle">Keresendő üzlettípus</string>
     <string name="searchRadiusLPTitle">Keresési távolság</string>
     <string name="languageLPTitle">Nyelv</string>
-    <string name="tryAgainLaterMsg">Tartózkodási hely nem elérhető. Próbálja később.</string>
+    <string name="tryAgainLaterMsg">Tartózkodási hely nem elérhető. Próbáld újra később.</string>
     <string name="user_position">Ön itt áll</string>
+    <string name="searchingNearbyPlacesInProgress">Közeli helyek keresése folyamatban...</string>
+    <string name="somethingWentWrongMessage">Valami probléma történt az adatok lekérése során. Próbáld újra később.</string>
 </resources>

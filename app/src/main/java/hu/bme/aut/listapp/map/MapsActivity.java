@@ -6,16 +6,14 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
-import android.content.SharedPreferences;
 import android.location.Location;
-import android.os.IBinder;
-import android.preference.PreferenceManager;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
+import android.os.IBinder;
+import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.LocalBroadcastManager;
 import android.view.View;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -28,17 +26,17 @@ import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import java.util.LinkedList;
 import java.util.List;
 
 import hu.bme.aut.listapp.R;
-import hu.bme.aut.listapp.SettingsActivity;
-import noman.googleplaces.NRPlaces;
 import noman.googleplaces.Place;
-import noman.googleplaces.PlaceType;
 import noman.googleplaces.PlacesException;
 import noman.googleplaces.PlacesListener;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, PlacesListener {
+
+    public static final LatLng budapestPos = new LatLng(47.4813602, 18.9902208);
 
     private Location lastLocation;
 
@@ -46,9 +44,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     private FloatingActionButton fab;
 
-    private PlacesListener listener;
+    private ProgressBar progressBar;
 
-    private List<Place> places;
+    private List<Place> places = new LinkedList<>();
 
     private ServiceLocation.BinderServiceLocation binderServiceLocation = null;
 
@@ -68,6 +66,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         @Override
         public void onReceive(Context context, Intent intent) {
             lastLocation = intent.getParcelableExtra(ServiceLocation.KEY_LOCATION);
+
+            if (lastLocation != null) {
+                refreshMarkers();
+                animateCameraToThisPosition(lastLocation);
+            }
         }
     };
 
@@ -80,61 +83,19 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
-        listener = this;
+        progressBar = findViewById(R.id.mapProgressBar);
 
         fab = findViewById(R.id.mapFab);
-        fab.setOnClickListener((view) -> {
-            if (lastLocation == null || mMap == null) {
-                Snackbar.make(view, R.string.tryAgainLaterMsg,
-                        Snackbar.LENGTH_LONG).show();
-                return;
-            }
-            CameraPosition cameraPosition = new CameraPosition.Builder()
-                    .target(
-                            new LatLng(lastLocation.getLatitude(),
-                                    lastLocation.getLongitude()))      // Sets the center of the map to location user
-                    .zoom(14)                   // Sets the zoom
-                    .bearing(lastLocation.getBearing())
-                    .build();                   // Creates a CameraPosition from the builder
-            mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
-            mMap.clear();
-            mMap.addMarker(new MarkerOptions().position(
-                    new LatLng(lastLocation.getLatitude(),
-                            lastLocation.getLongitude()))
-                    .icon(BitmapDescriptorFactory.
-                            defaultMarker(BitmapDescriptorFactory.HUE_GREEN))
-                    .title(getString(R.string.user_position)));
-
-            final SharedPreferences sharedPreferences = PreferenceManager
-                    .getDefaultSharedPreferences(getApplicationContext());
-
-            boolean openNow = sharedPreferences.getBoolean(SettingsActivity.KEY_IS_OPEN, false);
-            String type = sharedPreferences.getString(SettingsActivity.KEY_PLACE_TYPE, "");
-
-            int radius = 0;
-            try {
-                radius = Integer.parseInt(sharedPreferences.getString(SettingsActivity.KEY_RADIUS, "50000"));
-            } catch (Exception e) {
-            }
-
-            final NRPlaces.Builder builder = new NRPlaces.Builder();
-
-            if (!type.isEmpty() && !type.equals("all"))
-                builder.type(type);
-
-            builder.opennow(openNow)
-                    .listener(listener)
-                    .radius(radius)
-                    .latlng(lastLocation.getLatitude(), lastLocation.getLongitude())
-                    .key(getString(R.string.google_maps_key))
-                    .build()
-                    .execute();
-        });
+        fab.setOnClickListener(new MapFloatingButtonOnClickListener(this));
     }
 
     @Override
     public void onResume() {
         super.onResume();
+
+        if (mMap == null)
+            progressBar.setVisibility(View.VISIBLE);
+
         Intent i = new Intent(this, ServiceLocation.class);
         this.bindService(i, servConn, Context.BIND_AUTO_CREATE);
 
@@ -171,38 +132,114 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         uiSettings.setCompassEnabled(true);
         uiSettings.setAllGesturesEnabled(true);
 
-        // Add a marker in Budapest and move the camera
-        LatLng budapest = new LatLng(47.4813602, 18.9902208);
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(budapest));
+        progressBar.setVisibility(View.GONE);
+
+        animateCameraToThisPosition(lastLocation);
+        refreshMarkers();
     }
 
     @Override
     public void onPlacesFailure(PlacesException e) {
-        e.printStackTrace();
+        Toast.makeText(this, R.string.somethingWentWrongMessage, Toast.LENGTH_LONG).show();
     }
 
     @Override
     public void onPlacesStart() {
+        places.clear();
     }
 
     @Override
     public void onPlacesSuccess(List<Place> placesList) {
         runOnUiThread(() -> {
-            places.clear();
-            places = placesList;
-
-            for (Place place : places) {
-                LatLng latLng = new LatLng(place.getLatitude(), place.getLongitude());
-                mMap.addMarker(new MarkerOptions().position(latLng)
-                        .title(place.getName())
-                        .snippet(place.getVicinity())
-                        .icon(BitmapDescriptorFactory.
-                                defaultMarker(BitmapDescriptorFactory.HUE_RED)));
-            }
+            places.addAll(placesList);
+            refreshMarkers();
         });
+    }
+
+    /**
+     * Refeshes the marker of the user's location
+     * and every places' location.
+     */
+    public void refreshMarkers() {
+        mMap.clear();
+
+        createPlaceMarkers(places);
+
+        LatLng pos = null;
+        if (lastLocation != null) {
+            pos = new LatLng(lastLocation.getLatitude(), lastLocation.getLongitude());
+        } else {
+            pos = budapestPos;
+        }
+        createMarker(pos, getString(R.string.user_position), null, BitmapDescriptorFactory.HUE_GREEN);
+    }
+
+    /**
+     * Translates the camera to the given location. If location is null,
+     * animates it to the default location, which is Budapest, Hungary.
+     *
+     * @param location
+     */
+    public void animateCameraToThisPosition(Location location) {
+        LatLng pos = null;
+        CameraPosition.Builder cameraPositionBuilder = new CameraPosition.Builder();
+
+        if (location == null) {
+            pos = budapestPos; //Budapest
+        } else {
+            pos = new LatLng(location.getLatitude(),
+                    location.getLongitude());
+            cameraPositionBuilder.bearing(location.getBearing());
+        }
+
+        CameraPosition cameraPosition = new CameraPosition.Builder()
+                .target(pos)                // Sets the center of the map to location user
+                .zoom(14)                   // Sets the zoom
+                .build();                   // Creates a CameraPosition from the builder
+
+        mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+    }
+
+    private void createPlaceMarkers(List<Place> placeList) {
+        if (placeList == null || placeList.isEmpty())
+            return;
+
+        for (Place place : placeList) {
+            LatLng latLng = new LatLng(place.getLatitude(), place.getLongitude());
+            createMarker(latLng, place.getName(), place.getVicinity(), BitmapDescriptorFactory.HUE_RED);
+        }
+    }
+
+    /**
+     * Creates marker with the given parameters.
+     *
+     * @param position    latitude and longitude position of marker
+     * @param title       title of marker
+     * @param snippet     snippet of marker
+     * @param markerColor color of the marker. Use BitmapDescriptorFactory.
+     */
+    public void createMarker(LatLng position, String title, String snippet, float markerColor) {
+        if (title == null)
+            title = "";
+
+        if (snippet == null)
+            snippet = "";
+
+        mMap.addMarker(new MarkerOptions().position(position)
+                .title(title)
+                .snippet(snippet)
+                .icon(BitmapDescriptorFactory.defaultMarker(markerColor)));
     }
 
     @Override
     public void onPlacesFinished() {
+    }
+
+    public Location getLastLocation() {
+        return lastLocation;
+    }
+
+    public GoogleMap getmMap() {
+        return mMap;
     }
 }
